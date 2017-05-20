@@ -1,0 +1,28 @@
+#!/bin/bash
+
+set -e
+
+RFCS="rfc7230 rfc7231 rfc7232 rfc7233 rfc7234 rfc7235"
+
+echo "Updating local RFC cache..."
+mkdir -p .orig
+cd .orig
+for rfc in $RFCS; do
+    if [ ! -e "$rfc.txt" ]; then
+        wget -qc https://tools.ietf.org/rfc/$rfc.txt 
+    fi
+done
+cd ..
+
+echo "Creating annotated files from patches..."
+for rfc in $RFCS; do
+    if [ "$rfc-annotated.txt" -nt "$rfc.diff" ]; then
+        echo "$rfc-annotated.txt is newer than patch, refusing to re-create it"
+    else
+        rm -f $rfc-annotated.txt
+        cp .orig/$rfc.txt $rfc-annotated.txt
+        patch $rfc-annotated.txt $rfc.diff
+    fi
+done
+
+echo "done!"

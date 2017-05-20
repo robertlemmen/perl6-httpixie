@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+
+RFCS="rfc7230 rfc7231 rfc7232 rfc7233 rfc7234 rfc7235"
+
+echo "Updating diffs from annotated files..."
+for rfc in $RFCS; do
+    diff .orig/$rfc.txt $rfc-annotated.txt > $rfc.diff
+done
+
+echo "done!"

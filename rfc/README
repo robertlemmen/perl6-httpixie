@@ -1,6 +1,0 @@
-These are the HTTP/1.1 RFCs, with each line indented with "# ". Requirements 
-or considerations for our implementation can therefore easily be added 
-inline and quickly identified if they are prefixed with "# "
-
-Note that RFCs are non-free and must not be included in the distribution 
-tarball.

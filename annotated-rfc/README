@@ -1,0 +1,16 @@
+These are the HTTP/1.1 RFCs, with each line indented with "# ". Requirements 
+or considerations for our implementation can therefore easily be added 
+inline and quickly identified if they are prefixed with "# "
+
+Since all RFCs are non-free, they are not stored in the repository but there 
+is a script that downloads and patches them, with local modifications. you 
+can then edit the result and re-calc the patches. The way this works is:
+
+1. Download the rfcs into .orig an create local versions (-annotated.txt) of 
+   them with "./get-and-patch"
+
+2. Edit these annotated files by adding paragraphs indented and marked with 
+   "# ". Before checking into the repository, updat the diffs with
+    "./update-diffs". Do not check in the annotated files, just the diffs.
+
+3. If you want to remove temporary files, "./clean" does that for you
