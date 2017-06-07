@@ -16,9 +16,9 @@ method put($input) {
     # look for end of header
     for $!parse-pos..($!buffer.elems-4) -> $i {
         $!parse-pos = $i+1;
-        if (       ($!buffer[$i]   == $header-sep[0]) 
-                && ($!buffer[$i+1] == $header-sep[1]) 
-                && ($!buffer[$i+2] == $header-sep[2]) 
+        if (       ($!buffer[$i]   == $header-sep[0])
+                && ($!buffer[$i+1] == $header-sep[1])
+                && ($!buffer[$i+2] == $header-sep[2])
                 && ($!buffer[$i+3] == $header-sep[3]) ) {
             my $header = $!buffer.subbuf(0, $i).decode(encoding => 'ISO-8859-1');
             # XXX also reset buffer to not contain header anymore

@@ -1,4 +1,474 @@
-1168a1169,1171
+407a408,409
+> # "... one or more HTTP response messages ..." ?
+> 
+534a537,539
+> # I think a proxy can be built from a server and a client implementation,
+> # so we might not have to do anything, an example would be fab
+> 
+542a548,550
+> # Again, it should be possible to build this from a generic client and
+> # server implementation
+> 
+560c568
+< 
+---
+> # Not sure if this needs to be actively supported
+595a604,605
+> # In how far does this apply to TLS connections?
+> 
+727a738,740
+> # We need to figure out how to provide the backwards (and forwards?) 
+> # compatibility. client and server implementation need to be 
+> # configurble regarding their advertised version and tolerance
+760a774,777
+> # this is hard, since we don't typically want to make a request just to
+> determine this. perhaps we need a strict mode? Perhaps this is a 
+> requirement for the UA or calling code?
+> 
+794a812,813
+> # This is relevant for proxies and should be in our example
+> 
+800a820,821
+> # See above, we typically don't know and this seems problematic...
+> 
+813a835,836
+> # Needs test + support
+> 
+824a848,849
+> # This is a calling code or user agent requirement/option
+> 
+892c917,918
+< 
+---
+> # Is this relevant to us? perhaps to break host/port out of a url?
+> # There also is an existing module we should use
+925a952,953
+> # Needs test case and code
+> 
+986a1015,1016
+> # Needs test and code
+> 
+1022a1053,1055
+> # Needs to be understood better, does this mean a UA must not return 
+> # cookies from http to https? what else?
+> 
+1049a1083,1085
+> 
+> # Note the absence of a port but presence of colon!
+> 
+1088a1125,1127
+> # So we need to parse headers in a ASCII-superset, but the body in 
+> # something else?
+> 
+1102a1142,1143
+> # Do we ignore or bail? needs test and code
+> 
+1151a1193,1194
+> # We should turn these into enums, but allow custom ones
+> 
+1168a1212,1214
 > # this explicitely says that we should not attempt to fix URLs/targets
 > # with whitespace in them!
 > 
+1190a1237,1238
+> # Should be no problem, but test it
+> 
+1219a1268,1269
+> # So we need to restrict the reason character set!
+> 
+1225a1276,1277
+> # header fields are case-insensitive, but we probably do not want to 
+> # mangle them in transmission... 
+1227c1279
+< 
+---
+> # Also note the optional whitespace that needs to be trimmed
+1249a1302,1304
+> # do we want to support the obsolete folding?
+> # The client should make sure header keys and values conform
+> 
+1298a1354,1356
+> # Should we do the host/date first recommendation? seems almost pointless
+> # since the header is most likely goiing to be in one packet anyway...
+> 
+1312a1371,1374
+> # So we need to be able to iterate over the header fields in reception
+> # order! We also need to be able to set them in a given order in the 
+> # message type
+> 
+1320a1383,1384
+> # Speciific Cookie requirement, needs exploring
+> 
+1343c1407
+< 
+---
+> # Find the BWS cases and write test cases for them
+1379a1444,1448
+> # Server requirement need test
+> 
+> # Proxy requirement is interesting, as it needs different behavior from 
+> # server part
+> 
+1387a1457,1458
+> # Needs test and code
+> 
+1397c1468
+< 
+---
+> # Needs exploring
+1413a1485,1486
+> # Which one to do? Behavioral difference between proxy and server
+> 
+1426a1500,1501
+> # Test and code
+> 
+1434a1510,1512
+> # Needs exploring, certainly use correct encoding when serializing 
+> # the message
+> 
+1505c1583
+< 
+---
+> # All of this is calling code or UA behavior?
+1548a1627,1630
+> # Does "no body" mean that a Content-Length is not required? The server
+> # part needs to handle this as well. How does this interact with 0.9 
+> # behavior of reading until EOF?
+> 
+1586a1669,1672
+> # need to do chunked, need a way to apply more. should we be able to
+> # apply the encoding as part of our implementation, or do we leave that 
+> # to the caller? seems lazy...
+> 
+1603a1690,1695
+> # this seems consistent with doing the encoding within our implementation,
+> # and consistent with the proxy-as-client-plus-server approach. efficiency
+> # would however ask for a way to get the raw, encoded payload as well, and
+> # to be able to set it. perhaps we need to layer enother thing over the 
+> # message wheel?
+> 
+1618a1711,1712
+> # code and test
+> 
+1633c1727,1731
+<    version of a prior received response.  A server MUST NOT send a
+---
+>    version of a prior received response.
+> 
+> # see above, this seems very strict. perhaps a mode is required?
+> 
+>                                           A server MUST NOT send a
+1636a1735,1740
+> # code and test, also the case where the server handler code does the 
+> # encoding, which should throw an exception.
+> 
+> # how does dont-call-us-we-call-you event driven IO work withg exceptions?
+> # perhaps this is where Failure objects come in?
+> 
+1639a1744,1745
+> # test and code
+> 
+1650a1757,1758
+> # do not understand the "messages that do not include a payload" part
+> 
+1659a1768,1769
+> # code and test
+> 
+1668a1779,1780
+> # answers a question above regarding no body vs zero-length-body
+> 
+1690a1803,1804
+> # how do we handle HEAD in the server anyway?
+> 
+1696a1811,1812
+> # code and test
+> 
+1703a1820,1821
+> # does this hint at transfer-encoding preventing connection reuse?
+> 
+1709a1828,1829
+> # code and test large and negative cases
+> 
+1720a1841,1842
+> # let's do the second option, test and code
+> 
+1759a1882,1883
+> # how do we want to support CONNECT tunnels?
+> 
+1766a1891,1893
+> 
+> # huh, did it not say above that chunked must be the last?
+> 
+1768c1895,1899
+<        it is closed by the server.  If a Transfer-Encoding header field
+---
+>        it is closed by the server. 
+> 
+> # test and code
+> 
+>                                     If a Transfer-Encoding header field
+1773a1905,1906
+> # note request vs response behavior. also test and code
+> 
+1776c1909,1913
+<        Content-Length.  Such a message might indicate an attempt to
+---
+>        Content-Length.                                             
+> 
+> # needs test and code
+> 
+>                         Such a message might indicate an attempt to
+1781a1919,1921
+> # which is it? an error or fixup?
+> 
+> 
+1802a1943,1945
+> # puh, lots of cases. note different proxy behavior...
+> 
+> 
+1809a1953,1954
+> # ok, standard case.
+> 
+1812a1958,1959
+> # test and code
+> 
+1817a1965,1966
+> # test and code
+> 
+1826a1976,1977
+> # do we need to toggle this? there may be other behavior toggles required...
+> 
+1843a1995,1996
+> # ...again
+> 
+1860a2014,2015
+> # we will discard such data
+> 
+1866a2022,2023
+> # we should do that
+> 
+1872a2030,2031
+> # our client implementation should discard what it can and report an error
+> 
+1878a2038,2039
+> # we wont do a retry at this level, just report an error
+> 
+1898a2060,2061
+> # ...easy
+> 
+1902a2066
+> # ah! test and code
+1914a2079,2082
+> # we should support that! actually, a client that is coded that way is
+> # not going to work anyway, and our code may get more complicated. so 
+> # not sure...
+> 
+1925a2094,2095
+> # see previous, should we do that?
+> 
+1931a2102,2103
+> # needs a couple of test cases
+> 
+1944a2117,2119
+> 
+> # we should support these without a plugin
+> 
+1947a2123,2124
+> # ... and have some plugin system to add more. also needs code and test. rot13?
+> 
+1951a2129,2130
+> # what are transfer-parameters good for?
+> 
+1957c2136
+< 
+---
+> # code and test the case-insensitivity
+1996a2176,2177
+> # we need client and server test cases
+> 
+2004a2186,2187
+> # what is the randomiation part about?
+> 
+2026a2210,2211
+> # the "long polling" part sounds interesting, but still don't get it
+> 
+2033a2219,2221
+> # if the recipient ignores unknown ones, how can we implement this?
+> # perhaps defer?
+> 
+2045a2234,2235
+> # so a chunked trnasfer without trailer ends with two newlines?
+> 
+2061a2252,2253
+> # needs re-reading
+> 
+2071c2263
+< 
+---
+> # perhaps we should not support trailers from the start...
+2114a2307,2309
+> # test and code, also test case for x-compress. double check comrpession with
+> # browser
+> 
+2120a2316,2317
+> # same as above, test and code and verify with browser
+> 
+2124c2321
+< 
+---
+> # what does that mean? we should support it, but need test vector
+2141a2339,2340
+> # same as above, test and code, verify with browser, test case for x-gzip
+> 
+2148a2348,2349
+> # does this mean the server should not use TE not accepted by client?
+> 
+2154a2356,2357
+> # ... see above, so chunked is special!
+> 
+2177a2381,2382
+> # puh, needs re-reading
+> 
+2194a2400,2401
+> # we need some tractable way to select which TE to use. callback?
+> 
+2198a2406,2407
+> # ok
+> 
+2204a2414,2415
+> # say what?
+> 
+2217a2429,2430
+> # defer trailers? 
+> 
+2225a2439,2440
+> # how do we inject proxy config? how do we test it?
+> 
+2261a2477,2478
+> # should we provide a cache implementation? perhaps not at the start
+> 
+2286c2503,2507
+<    target URI.  There are four distinct formats for the request-target,
+---
+>    target URI.                                                         
+> 
+> # note the "derived"
+> 
+>                 There are four distinct formats for the request-target,
+2316a2538,2539
+> # test and code, also empty path case, also empty path but args case!
+> 
+2349c2572,2573
+< 
+---
+> # so this part of the coed needs to know whether we are going to a proxy or
+> # the origin server!
+2363a2588,2589
+> # test case!
+> 
+2368a2595,2596
+> # are we concerned about CONNECT yet?
+> 
+2390a2619,2621
+> # should be supported, but of course OPTIONS handling is unclear at 
+> # the moment
+> 
+2396a2628,2630
+> # re-read, don't understand but OPTIONS seems out of scope for the 
+> # first version anyway
+> 
+2421a2656,2657
+> # right, our server impl and routing needs to support virtual servers!
+> 
+2431a2668,2669
+> # what's it with the "@"?? check!
+> 
+2435a2674,2676
+> # discussed above, we should do that, but requires priorities in header 
+> # fields, can't just use a map
+> 
+2446a2688,2689
+> # test case
+> 
+2453a2697,2698
+> # test case, proxy behavior differs from server again
+> 
+2463c2708
+< 
+---
+> # what does the host vs ip part mean for our implementation?
+2475a2721,2722
+> # test and code
+> 
+2477a2725,2726
+> # section needs re-reading!
+> 
+2573a2823,2824
+> # which reminds of the fact that requests can be pipelined! how do we support
+> # that? note client and server, server may need to queue responses!
+2603a2855,2856
+> # re-read
+> 
+2609a2863,2864
+> # re-read
+> 
+2631a2887
+> # re-read whole section
+2711a2968,2969
+> # let's defer transforming proxies...
+> 
+2816a3075,3077
+> # do we need to manage request queues on our end? perhaps it is enough
+> # to limit pipelining?
+> 
+2824a3086,3088
+> # so the connection part is independent from the messaging for a proxy, which
+> # lines up nicely with our modular architecture!
+> 
+2834a3099,3100
+> # what?
+> 
+2895a3162,3163
+> # base case, needs test and code. but reread above...
+> 
+2910c3178
+< 
+---
+> # base case, test and code
+2935a3204,3206
+> # lots of test cases, but some are 1.0 backwards compat, which are not
+> # yet analyzed
+> 
+2948a3220,3221
+> # note that there are closing cases from section 3.3
+> 
+2980a3254,3255
+> # we should not retry at our level
+> 
+3004a3280,3282
+> # interesting, the "safe" aspect above needs thinking about when we can 
+> # handle pipelined request in parallel
+> 
+3014a3293,3295
+> # so we should never pipeline the first request? or just not after a 
+> # failure?  wher do we need to do this? UA?
+> 
+3022a3304
+> # re-read
+3041a3324,3325
+> # ugh, pipelining in the proxy sounds complicated...
+> 
+3063a3348,3349
+> # we need a way to manage this in our connection pool
+> 
+3135a3422
+> # note the pipelined messages!
+3161a3449,3450
+> # what? is that even possible in perl?
+> 
+3164a3454,3455
+> # let's verify first whether that actually is a problem!
+> 
+3165a3457,3458
+> 
+> # let's defer UPGRADE to a later version
