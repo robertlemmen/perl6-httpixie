@@ -5,9 +5,28 @@ use v6;
 use lib $*PROGRAM.dirname.IO.child("lib").path;
 
 use HTTPixie::Server;
+use HTTPixie::Response;
 
-my $srv = HTTPixie::Server.new(port => 1234);
+my int64 $concurrency = 0;
+my int64 $max-concurrency = 0;
+
+my $srv = HTTPixie::Server.new(port => 1234, handler => sub ($rq) {
+        my $cc = atomic-inc-fetch($concurrency);
+        if $cc > $max-concurrency {
+            say "concurrency level now $cc";
+            atomic-assign($max-concurrency, $cc);
+        }
+        my $res = HTTPixie::Response.new(http-version => $rq.http-version,
+                                      status-code => 200,
+                                      status-phrase => "Ok");
+        $res.headers<Connection> = "Close";
+        sleep(0.1);
+        atomic-dec-fetch($concurrency);
+        return $res;
+    });
 
 signal(SIGINT).tap( { $srv.stop } );
 
-await $srv.start;
+my $p = $srv.start;
+say "waiting for work!";
+await $p;
