@@ -1,0 +1,16 @@
+#!/usr/bin/env perl6
+
+use v6;
+
+use lib $*PROGRAM.dirname.IO.child("lib").path;
+
+use HTTPixie::Client;
+use HTTPixie::Request;
+
+my $client = HTTPixie::Client.new;
+
+my $request = HTTPixie::Request.new(method => 'GET', request-target => '/test234', http-version => 'HTTP/1.1');
+$request.headers<Host> = '127.0.0.1:631';
+my $response = await $client.execute($request);
+say $response.perl;
+
