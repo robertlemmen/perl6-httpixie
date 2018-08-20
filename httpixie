@@ -6,6 +6,7 @@ use lib $*PROGRAM.dirname.IO.child("lib").path;
 
 use HTTPixie::Server;
 use HTTPixie::Response;
+use JSON::Tiny;
 
 my int64 $concurrency = 0;
 my int64 $max-concurrency = 0;
@@ -16,11 +17,19 @@ my $srv = HTTPixie::Server.new(port => 1234, handler => sub ($rq) {
             say "concurrency level now $cc";
             atomic-assign($max-concurrency, $cc);
         }
+        my $data = {
+            test => [1, 2, 3, 'ofenrohr'
+                ]
+        };
         my $res = HTTPixie::Response.new(http-version => $rq.http-version,
                                       status-code => 200,
                                       status-phrase => "Ok");
-        $res.headers<Connection> = "Close";
-        sleep(0.1);
+        $res.headers<Connection> = "Keep-Alive";
+        my $body-data = {
+            test => [1, 2, 3, 'ofenrohr'
+                ]
+        };
+        $res.body = to-json($body-data);
         atomic-dec-fetch($concurrency);
         return $res;
     });

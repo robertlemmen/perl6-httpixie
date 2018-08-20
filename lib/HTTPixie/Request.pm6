@@ -16,3 +16,6 @@ method parse-start-line($request-line) {
     # XXX throw exception
 }
 
+method serialize-start-line() {
+    return "$!method $!request-target $!http-version".encode;
+}

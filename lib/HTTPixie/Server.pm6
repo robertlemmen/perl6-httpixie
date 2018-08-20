@@ -16,15 +16,32 @@ method start() {
     my $p = $!port // 6060;
     say "starting tcp server on $h:$p";
     my $server-socket = IO::Socket::Async.listen($h, $p);
-    $!done = Promise.new();
+    $!done = Promise.new;
     $!srv-tap = $server-socket.tap( -> $client-socket {
         say "accepted connection";
-        my $wheel = HTTPixie::Wheel.new(handler => sub ($rq) {
+        my $wheel = HTTPixie::Wheel.new(message-class => 'request',
+                            handler => sub ($rq) {
                                 my $response = $!handler($rq);
-                                $client-socket.write($response.serialize-header);
-                                $client-socket.close;
+                                if $response.body {
+                                    my $body-buf = $response.body.encode;
+                                    $response.headers<Content-Length> = $body-buf.bytes;
+                                    $client-socket.write($response.serialize-header);
+                                    $client-socket.write($body-buf);
+                                }
+                                else {
+                                    $client-socket.write($response.serialize-header);
+                                }
+                                # XXX needs much better heuristic, HTTP/1.1 and
+                                # all
+                                my $client-conn = $rq.headers<Connection>//"??";
+                                if $client-conn ne "Keep-Alive" {
+                                    my $client-conn = $rq.headers<Connection>//"??";
+                                    say "closing socket due to [$client-conn]";
+                                    $client-socket.close;
+                                }
                             });
-        $client-socket.Supply(:bin).tap( -> $input {
+        $client-socket.Supply(:bin).act( -> $input {
+            say "input from {$*THREAD.id}";
             # XXX how can we do this in parallel? we would need to lock the
             # wheel to make sure we are 
             # XXX I hope that act is only a critical section per Supply. if it
